@@ -2,6 +2,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+def isAdjustSdkSignatureDisabled = project.findProperty("adjustDisableSdkSignature")?.toBoolean()
+        ?: rootProject.ext.isAdjustSdkSignatureDisabled
+
 android {
     compileSdk rootProject.ext.coreCompileSdkVersion
 
@@ -16,6 +19,8 @@ android {
         minSdkVersion rootProject.ext.coreMinSdkVersion
         targetSdkVersion rootProject.ext.coreTargetSdkVersion
         consumerProguardFiles 'adjust-proguard-rules.txt'
+        buildConfigField "boolean", "ADJUST_DISABLE_SDK_SIGNATURE",
+                isAdjustSdkSignatureDisabled.toString()
     }
 
     buildTypes {
@@ -23,6 +28,9 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    buildFeatures {
+        buildConfig true
     }
     namespace 'com.adjust.sdk'
 }

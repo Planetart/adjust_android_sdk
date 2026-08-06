@@ -14,6 +14,10 @@ public class AdjustSigner {
     }
 
     public static boolean isPresent() {
+        if (BuildConfig.ADJUST_DISABLE_SDK_SIGNATURE) {
+            return true;
+        }
+
         getSignerInstance();
 
         if (signerInstance != null) {
@@ -24,6 +28,10 @@ public class AdjustSigner {
     }
 
     public static void onResume(ILogger logger){
+        if (BuildConfig.ADJUST_DISABLE_SDK_SIGNATURE) {
+            return;
+        }
+
         getSignerInstance();
 
         if (signerInstance == null) {
@@ -40,6 +48,10 @@ public class AdjustSigner {
     public static Map<String, String> sign(final Map<String, String> packageParams,
                                            final Map<String, String> extraParams,
                                            final Context context, ILogger logger) {
+        if (BuildConfig.ADJUST_DISABLE_SDK_SIGNATURE) {
+            return new HashMap<>();
+        }
+
         getSignerInstance();
 
         Map<String, String> outputParams = new HashMap<>();
@@ -60,6 +72,10 @@ public class AdjustSigner {
     }
 
     private static void getSignerInstance() {
+        if (BuildConfig.ADJUST_DISABLE_SDK_SIGNATURE) {
+            return;
+        }
+
         if (signerInstance == null) {
             synchronized (AdjustSigner.class) {
                 if (signerInstance == null) {
