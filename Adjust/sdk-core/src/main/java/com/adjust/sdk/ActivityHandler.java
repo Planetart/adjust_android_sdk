@@ -356,6 +356,7 @@ public class ActivityHandler
         onActivityLifecycle(true);
     }
     public void onResumeI() {
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.ON_RESUME_I_TS);
         stopBackgroundTimerI();
 
         startForegroundTimerI();
@@ -1182,6 +1183,7 @@ public class ActivityHandler
     }
 
     void initI() {
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.INIT_I_START_TS);
         SESSION_INTERVAL = AdjustFactory.getSessionInterval();
         SUBSESSION_INTERVAL = AdjustFactory.getSubsessionInterval();
         // get timer values
@@ -1381,6 +1383,7 @@ public class ActivityHandler
         sendReftagReferrerI();
 
         bootstrapLifecycleI();
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.INIT_I_END_TS);
     }
 
     private void handleAttributionCallbackI() {
