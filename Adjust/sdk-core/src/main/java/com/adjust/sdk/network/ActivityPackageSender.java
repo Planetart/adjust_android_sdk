@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.adjust.sdk.ActivityKind;
 import com.adjust.sdk.ActivityPackage;
 import com.adjust.sdk.AdjustFactory;
+import com.adjust.sdk.AdjustFirstSessionTiming;
 import com.adjust.sdk.AdjustSigner;
 import com.adjust.sdk.Constants;
 import com.adjust.sdk.ILogger;
@@ -111,12 +112,20 @@ public class ActivityPackageSender implements IActivityPackageSender {
         do {
             Map<String, String> updatedSendingParameters = updateSendingParameters(sendingParameters);
 
+            AdjustFirstSessionTiming.markIfSession(
+                    activityPackage, AdjustFirstSessionTiming.SESSION_SIGN_START_TS);
             Map<String, String> signedParameters = signParameters(activityPackage, updatedSendingParameters);
+            AdjustFirstSessionTiming.markIfSession(
+                    activityPackage, AdjustFirstSessionTiming.SESSION_SIGN_END_TS);
 
             responseData =
                     ResponseData.buildResponseData(activityPackage, updatedSendingParameters, signedParameters);
 
+            AdjustFirstSessionTiming.markIfSession(
+                    activityPackage, AdjustFirstSessionTiming.SESSION_NETWORK_START_TS);
             tryToGetResponse(responseData);
+            AdjustFirstSessionTiming.markIfSession(
+                    activityPackage, AdjustFirstSessionTiming.SESSION_NETWORK_END_TS);
 
             retryToSend = shouldRetryToSendWithUrlStrategy(responseData);
         } while (retryToSend);

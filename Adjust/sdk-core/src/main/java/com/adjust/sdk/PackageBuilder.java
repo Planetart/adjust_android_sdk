@@ -83,12 +83,14 @@ public class PackageBuilder {
     }
 
     ActivityPackage buildSessionPackage() {
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.SESSION_PACKAGE_BUILD_START_TS);
         Map<String, String> parameters = getSessionParameters();
         ActivityPackage sessionPackage = getDefaultActivityPackage(ActivityKind.SESSION);
         sessionPackage.setPath("/session");
         sessionPackage.setSuffix("");
 
         sessionPackage.setParameters(parameters);
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.SESSION_PACKAGE_BUILD_END_TS);
         return sessionPackage;
     }
 
