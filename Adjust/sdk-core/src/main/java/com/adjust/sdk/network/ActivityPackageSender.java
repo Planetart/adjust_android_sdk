@@ -123,13 +123,21 @@ public class ActivityPackageSender implements IActivityPackageSender {
 
             AdjustFirstSessionTiming.markIfSession(
                     activityPackage, AdjustFirstSessionTiming.SESSION_NETWORK_START_TS);
+            AdjustFirstSessionTiming.markIfKind(
+                    activityPackage,
+                    ActivityKind.ATTRIBUTION,
+                    AdjustFirstSessionTiming.ATTRIBUTION_NETWORK_START_TS);
             tryToGetResponse(responseData);
-            AdjustFirstSessionTiming.markIfSession(
-                    activityPackage, AdjustFirstSessionTiming.SESSION_NETWORK_END_TS);
 
             retryToSend = shouldRetryToSendWithUrlStrategy(responseData);
         } while (retryToSend);
 
+        AdjustFirstSessionTiming.markIfSession(
+                activityPackage, AdjustFirstSessionTiming.SESSION_NETWORK_END_TS);
+        AdjustFirstSessionTiming.markIfKind(
+                activityPackage,
+                ActivityKind.ATTRIBUTION,
+                AdjustFirstSessionTiming.ATTRIBUTION_NETWORK_END_TS);
         return responseData;
     }
 

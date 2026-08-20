@@ -6,8 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * First-write-wins timestamps for the expensive stages on the first
- * {@code /session} path. Merged into the host app {@code adjust_track_time}
- * event so GAID, package build, signing, and network cost can be compared.
+ * {@code /session} and deferred-deeplink path. Merged into the host app
+ * {@code adjust_track_time} event so GAID, session HTTP, backend {@code ask_in},
+ * and {@code /attribution} cost can be compared.
  */
 public final class AdjustFirstSessionTiming {
 
@@ -25,6 +26,14 @@ public final class AdjustFirstSessionTiming {
     public static final String SESSION_SIGN_END_TS = "session_sign_end_ts";
     public static final String SESSION_NETWORK_START_TS = "session_network_start_ts";
     public static final String SESSION_NETWORK_END_TS = "session_network_end_ts";
+    public static final String SESSION_RESPONSE_TASKS_TS = "session_response_tasks_ts";
+    public static final String ASK_IN_MS = "ask_in_ms";
+    public static final String ATTRIBUTION_WAIT_START_TS = "attribution_wait_start_ts";
+    public static final String ATTRIBUTION_REQUEST_START_TS = "attribution_request_start_ts";
+    public static final String ATTRIBUTION_NETWORK_START_TS = "attribution_network_start_ts";
+    public static final String ATTRIBUTION_NETWORK_END_TS = "attribution_network_end_ts";
+    public static final String ATTRIBUTION_RESPONSE_TASKS_TS = "attribution_response_tasks_ts";
+    public static final String DEEPLINK_SOURCE = "deeplink_source";
 
     private static final ConcurrentHashMap<String, Object> values = new ConcurrentHashMap<>();
 
@@ -39,7 +48,15 @@ public final class AdjustFirstSessionTiming {
     }
 
     public static void markIfSession(final ActivityPackage activityPackage, final String step) {
-        if (activityPackage != null && activityPackage.getActivityKind() == ActivityKind.SESSION) {
+        markIfKind(activityPackage, ActivityKind.SESSION, step);
+    }
+
+    public static void markIfKind(
+            final ActivityPackage activityPackage,
+            final ActivityKind kind,
+            final String step)
+    {
+        if (activityPackage != null && activityPackage.getActivityKind() == kind) {
             mark(step);
         }
     }
