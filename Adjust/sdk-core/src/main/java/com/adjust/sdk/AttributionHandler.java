@@ -174,6 +174,15 @@ public class AttributionHandler implements IAttributionHandler,
 
         Long timerMilliseconds = responseData.askIn; // responseData.jsonResponse.optLong("ask_in", -1);
         if (timerMilliseconds != null && timerMilliseconds >= 0) {
+            if (responseData instanceof SessionResponseData) {
+                AdjustFirstSessionTiming.putExtra(
+                        AdjustFirstSessionTiming.ASK_IN_MS,
+                        timerMilliseconds);
+                if (timerMilliseconds > 0) {
+                    AdjustFirstSessionTiming.mark(
+                            AdjustFirstSessionTiming.ATTRIBUTION_WAIT_START_TS);
+                }
+            }
             activityHandler.setAskingAttribution(true);
             lastInitiatedBy = "backend";
             getAttributionI(timerMilliseconds);
@@ -220,6 +229,7 @@ public class AttributionHandler implements IAttributionHandler,
             return;
         }
         attributionResponseData.deeplink = Uri.parse(deeplinkString);
+        AdjustFirstSessionTiming.putExtra(AdjustFirstSessionTiming.DEEPLINK_SOURCE, "attribution");
     }
 
     private void checkDeeplinkInSessionResponseI(SessionResponseData sessionResponseData) {
@@ -232,6 +242,7 @@ public class AttributionHandler implements IAttributionHandler,
             return;
         }
         sessionResponseData.deeplink = Uri.parse(deeplinkString);
+        AdjustFirstSessionTiming.putExtra(AdjustFirstSessionTiming.DEEPLINK_SOURCE, "session");
     }
 
     private void sendAttributionRequestI() {
@@ -243,6 +254,7 @@ public class AttributionHandler implements IAttributionHandler,
             return;
         }
 
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.ATTRIBUTION_REQUEST_START_TS);
         // Create attribution package before sending attribution request.
         ActivityPackage attributionPackage = buildAndGetAttributionPackage(activityHandlerWeakRef.get().getInternalState());
         logger.verbose("%s", attributionPackage.getExtendedString());

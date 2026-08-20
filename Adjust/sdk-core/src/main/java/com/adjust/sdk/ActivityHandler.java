@@ -2162,6 +2162,7 @@ public class ActivityHandler
     }
 
     private void launchSessionResponseTasksI(SessionResponseData sessionResponseData) {
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.SESSION_RESPONSE_TASKS_TS);
         logger.debug("Launching SessionResponse tasks");
 
         // try to update adid from response
@@ -2243,6 +2244,7 @@ public class ActivityHandler
     }
 
     private void launchAttributionResponseTasksI(AttributionResponseData attributionResponseData) {
+        AdjustFirstSessionTiming.mark(AdjustFirstSessionTiming.ATTRIBUTION_RESPONSE_TASKS_TS);
         // process remote triggers from any response
         processRemoteTriggersI(attributionResponseData);
 
